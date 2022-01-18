@@ -67,4 +67,37 @@ public class AddNewOfferTest {
 
     System.assert(!testResult.isSuccess());
   }
+
+  /**
+   * @author Leszek Szczotka
+   * @date 17.01.2022
+   * @description test method checking success adding an offer to the salon
+   */
+  @isTest
+  static void AddCarToSalonSuccess() {
+    List<Vehicle__c> testCars2 = TestsUtils.inCreateTestCars(200);
+    List<Salon__c> testSalons2 = TestsUtils.inCreateTestSalon(1);
+
+    for (Integer i = 0; i < 200; i++) {
+      testCars2[i].Salon__c = testSalons2[0].Id;
+    }
+
+    Offer__c newOffer1 = new Offer__c(
+      Vehicle__c = testCars2[0].Id,
+      Salon__c = testSalons2[0].Id,
+      Offer_type__c = Utils.PHYSICAL_OFFER
+    );
+    insert newOffer1;
+
+    Test.startTest();
+    Offer__c newOffer3 = new Offer__c(
+      Vehicle__c = testCars2[0].Id,
+      Salon__c = testSalons2[0].Id,
+      Offer_type__c = Utils.VIRTUAL_OFFER
+    );
+    Database.SaveResult testResult2 = Database.insert(newOffer3, true);
+    Test.stopTest();
+
+    System.assert(testResult2.isSuccess());
+  }
 }
