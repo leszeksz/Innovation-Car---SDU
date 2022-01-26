@@ -8,96 +8,71 @@ public class AddNewOfferTest {
   /**
    * @author Leszek Szczotka
    * @date 13.01.2022
-   * @description test method checking getting error when physical offer is already in one salon
+   * @description test method checking when no more salons are available
    */
   @isTest
-  static void getErrorWhenALreadyIsPhysicalOffer() {
-    List<Vehicle__c> testCars = TestsUtils.inCreateTestCars(200);
-    List<Salon__c> testSalons = TestsUtils.inCreateTestSalon(1);
-    List<Offer__c> testPhysicalOffers = TestsUtils.inCreateTestPhysicalOffer(
-      200
-    );
-
-    for (Integer i = 0; i < 200; i++) {
-      testCars[i].Salon__c = testSalons[0].Id;
-    }
-
-    Test.startTest();
-    Database.SaveResult[] testResults = Database.update(testCars, false);
-    Test.stopTest();
-
-    for (Database.SaveResult result : testResults) {
-      System.assert(!result.isSuccess());
-      System.assert(result.getErrors().size() > 0);
-      System.assertEquals(
-        Utils.VEHICLE_IS_ALREADY_AVAILABLE_PHYSICALLY,
-        result.getErrors()[0].getMessage()
+  static void TestAddSalonOfferWhereNoSalon() {
+    List<Vehicle__c> vehicles = TestsUtils.inCreateTestCars(200);
+    List<Salon__c> salons = TestsUtils.inCreateTestSalon(1);
+    List<Offer__c> offers = new List<Offer__c>();
+    for (Integer i = 0; i <= 199; i++) {
+      Offer__c offer = new Offer__c(
+        Name = Utils.TEST_OFFER_NAME,
+        Vehicle__c = vehicles[i].Id,
+        Salon__c = salons[0].Id,
+        Offer_type__c = Utils.PHYSICAL_OFFER
       );
+      offers.add(offer);
+    }
+    insert offers;
+    for (Integer i = 0; i < offers.size(); i++) {
+      System.assertEquals(offers[i].Salon__c, salons[0].Id);
     }
   }
+
   /**
    * @author Leszek Szczotka
    * @date 13.01.2022
-   * @description test method checking not adding second physical offer to one salon
+   * @description test method checking not adding second physical offer to one vehicle
    */
-  @isTest
-  static void AddCarToSalon() {
-    List<Vehicle__c> testCars = TestsUtils.inCreateTestCars(200);
-    List<Salon__c> testSalons = TestsUtils.inCreateTestSalon(1);
 
-    for (Integer i = 0; i < 200; i++) {
-      testCars[i].Salon__c = testSalons[0].Id;
+  @isTest
+  static void TestAddPhysicalOfferWhereOfferExist() {
+    List<Salon__c> salons = TestsUtils.inCreateTestSalon(2);
+    List<Vehicle__c> vehicles = TestsUtils.inCreateTestCars(200);
+    List<Offer__c> offers = new List<Offer__c>();
+    List<Offer__c> offersDuplicate = new List<Offer__c>();
+    for (Integer i = 0; i <= 199; i++) {
+      Offer__c offer = new Offer__c(
+        Name = Utils.TEST_OFFER_NAME,
+        Vehicle__c = vehicles[i].Id,
+        Salon__c = salons[0].Id,
+        Offer_type__c = Utils.PHYSICAL_OFFER
+      );
+      offers.add(offer);
+    }
+    insert offers;
+
+    for (Integer i = 0; i <= 199; i++) {
+      Offer__c offer = new Offer__c(
+        Name = Utils.TEST_OFFER_NAME,
+        Vehicle__c = vehicles[i].Id,
+        Salon__c = salons[1].Id,
+        Offer_type__c = Utils.PHYSICAL_OFFER
+      );
+      offersDuplicate.add(offer);
     }
 
-    Offer__c newOffer1 = new Offer__c(
-      Vehicle__c = testCars[0].Id,
-      Salon__c = testSalons[0].Id,
-      Offer_type__c = Utils.PHYSICAL_OFFER
-    );
-    insert newOffer1;
-
     Test.startTest();
-    Offer__c newOffer2 = new Offer__c(
-      Vehicle__c = testCars[0].Id,
-      Salon__c = testSalons[0].Id,
-      Offer_type__c = Utils.PHYSICAL_OFFER
-    );
-    Database.SaveResult testResult = Database.insert(newOffer2, false);
+    Database.SaveResult[] result = Database.insert(offersDuplicate, false);
     Test.stopTest();
 
-    System.assert(!testResult.isSuccess());
-  }
-
-  /**
-   * @author Leszek Szczotka
-   * @date 17.01.2022
-   * @description test method checking success adding an offer to the salon
-   */
-  @isTest
-  static void AddCarToSalonSuccess() {
-    List<Vehicle__c> testCars2 = TestsUtils.inCreateTestCars(200);
-    List<Salon__c> testSalons2 = TestsUtils.inCreateTestSalon(1);
-
-    for (Integer i = 0; i < 200; i++) {
-      testCars2[i].Salon__c = testSalons2[0].Id;
+    for (Integer i = 0; i < offers.size(); i++) {
+      System.assert(!result[i].isSuccess());
+      System.assertEquals(
+        'Vehicle is already available physically',
+        result[i].getErrors()[0].getMessage()
+      );
     }
-
-    Offer__c newOffer1 = new Offer__c(
-      Vehicle__c = testCars2[0].Id,
-      Salon__c = testSalons2[0].Id,
-      Offer_type__c = Utils.PHYSICAL_OFFER
-    );
-    insert newOffer1;
-
-    Test.startTest();
-    Offer__c newOffer3 = new Offer__c(
-      Vehicle__c = testCars2[0].Id,
-      Salon__c = testSalons2[0].Id,
-      Offer_type__c = Utils.VIRTUAL_OFFER
-    );
-    Database.SaveResult testResult2 = Database.insert(newOffer3, true);
-    Test.stopTest();
-
-    System.assert(testResult2.isSuccess());
   }
 }

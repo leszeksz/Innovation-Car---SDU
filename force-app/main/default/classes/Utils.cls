@@ -13,4 +13,5 @@ public class Utils {
   public static final String MODEL = 'testModel';
   public static final String ACCOUNT = 'TestAccount';
   public static final String TELEMETRY_TEMPERATURE = 'temperature';
+  public static final String TEST_OFFER_NAME = 'Test offer';
 }

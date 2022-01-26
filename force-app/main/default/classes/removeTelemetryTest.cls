@@ -12,30 +12,27 @@ public class removeTelemetryTest {
    */
   @isTest
   static void deleteTelemetryWithCar() {
-    Vehicle__c testVehicle = TestsUtils.inCreateTestCars(1)[0];
-
-    Telemetry__c testTelemetry = TestsUtils.inCreateTestTelemetry(1)[0];
-    testTelemetry.Vehicle__c = testVehicle.Id;
-    update testTelemetry;
+    List<Telemetry__c> testTelemetry = TestsUtils.inCreateTestTelemetry(200);
+    Id testVehicleId = testTelemetry.get(0).Vehicle__c;
 
     List<Telemetry__c> telemetryBefore = [
       SELECT Id
       FROM Telemetry__c
-      WHERE Vehicle__c = :testVehicle.Id
+      WHERE Vehicle__c = :testVehicleId
     ];
 
     Test.startTest();
-    Database.DeleteResult testResult = database.delete(testVehicle, true);
+    Database.DeleteResult testResult = database.delete(testVehicleId, true);
     Test.stopTest();
 
     List<Telemetry__c> telemetryAfter = [
       SELECT Id
       FROM Telemetry__c
-      WHERE Vehicle__c = :testVehicle.Id
+      WHERE Vehicle__c = :testVehicleId
     ];
 
     System.assert(testResult.isSuccess());
-    System.assert(telemetryBefore.size() == 1);
+    System.assert(telemetryBefore.size() == 200);
     System.assert(telemetryAfter.size() == 0);
   }
 }

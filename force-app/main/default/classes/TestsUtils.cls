@@ -10,11 +10,7 @@ public class TestsUtils {
    * @description util method to create account
    */
   public static List<Account> inCreateTestAccount() {
-    List<Account> testAccounts = [
-      SELECT Id
-      FROM Account
-      WHERE Name = :Utils.ACCOUNT
-    ];
+    List<Account> testAccounts = new List<Account>();
     Account testAccount = new Account(Name = Utils.ACCOUNT);
 
     testAccounts = new List<Account>{ testAccount };
