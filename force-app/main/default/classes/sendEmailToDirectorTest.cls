@@ -12,8 +12,6 @@ public class sendEmailToDirectorTest {
    */
   @isTest
   static void sendEmailTest() {
-    Messaging.SingleEmailMessage email = new Messaging.SingleEmailMessage();
-
     List<Vehicle__c> testVehicle = TestsUtils.inCreateTestCars(1);
     update testVehicle;
     List<Salon__c> testSalon = TestsUtils.inCreateTestSalon(1);

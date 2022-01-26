@@ -16,5 +16,13 @@ public class DeleteTelemetrySchedulerTest {
     DeleteTelemetryScheduler scheduler = new DeleteTelemetryScheduler();
     system.schedule(Utils.JOB_NAME, Utils.CRON_EXP, scheduler);
     Test.stopTest();
+
+    CronTrigger cronTrigger = [
+      SELECT Id, CronExpression, TimesTriggered, NextFireTime
+      FROM CronTrigger
+      WHERE id = :jobId
+    ];
+
+    System.assertEquals(Utils.CROP_EXP, cronTrigger);
   }
 }

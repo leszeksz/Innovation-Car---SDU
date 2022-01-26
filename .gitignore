@@ -38,4 +38,6 @@ $RECYCLE.BIN/
 
 # Local environment variables
 .env
-Innovation Car.iml
+.idea
+package-lock.json
+package.json

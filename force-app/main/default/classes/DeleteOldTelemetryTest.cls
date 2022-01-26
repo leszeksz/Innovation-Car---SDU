@@ -12,7 +12,7 @@ public class DeleteOldTelemetryTest {
    */
   @isTest
   static void deleteTelemetryTest() {
-    Vehicle__c testVehicle = TestsUtils.inCreateTestCars(1)[0];
+    Vehicle__c testVehicle = TestsUtils.inCreateTestCars(200)[0];
     date oldTelemetry = system.Date.today() - 90;
 
     Telemetry__c testTelemetry = TestsUtils.inCreateTestTelemetry(1)[0];
